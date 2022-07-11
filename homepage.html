@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        var hope_temp;
+        var cur_temper;
+        var cur_humid;
+
+        setInterval(function () {
+            $.ajax({
+                url: '/update',
+                type: 'POST',
+                success: function (response) {
+                    console.log(response);
+                    $("#temp").html(response["temperature"] + "°C");
+                    $("#hum").html(response["humidity"] + "%");
+                    $("#hope_temp").html(response["ho_temp"] + "°C");
+                    hope_temp = response["ho_temp"];
+                    cur_temper = response["temperature"];
+                    cur_humid = response["humidity"];
+                    if (hope_temp == 18 || hope_temp == 26) {
+                        $("#hope_caution").text("희망온도 범위는 18°C~26°C 사이입니다");
+                    }
+                    else {
+                        $("#hope_caution").text("");
+                    }
+                    if (cur_temper > 25 || cur_temper < 20) {
+                        $("#temp_caution").text("경고 : 적절한 실내온도는 20°C~25°C 사이입니다");
+                    }
+                    else {
+                        $("#temp_caution").text("");
+                    }
+                    if (cur_humid > 60 || cur_humid < 30) {
+                        //alert("경고 : 적절한 실내습도는 30% ~ 60% 사이입니다")
+                        $("#humid_caution").text("경고 : 적절한 실내습도는 30% ~ 60% 사이입니다");
+                    }
+                    else {
+                        $("#humid_caution").text("");
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }, 1000);
+    </script>
+    <style>
+        #hope_temperature {
+            text-align: right;
+            font-size: large;
+        }
+
+        #hope_caution {
+            color: red;
+            font-size: medium;
+        }
+
+        #temperature {
+            text-align: center;
+        }
+
+        #humid {
+            text-align: center;
+            position: relative;
+            right: 10px;
+        }
+
+        #hum {
+            border-radius: 2em;
+            background-color: skyblue;
+            position: relative;
+            left: 10px;
+        }
+
+        #temp {
+            border-radius: 2em;
+            background-color: yellow;
+        }
+
+        #humid_caution {
+            color: red;
+            font-size: medium;
+        }
+
+        #temp_caution {
+            color: red;
+            font-size: medium;
+        }
+
+        #DOWN {
+            position: relative;
+            left: 35px;
+            bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="hope_temperature">
+        <span id="hope_info">희망온도 : </span>
+        <span id="hope_temp"></span>
+        <div id="hope_caution"></div>
+    </div>
+    <br>
+    </br>
+    <br>
+    </br>
+    <br>
+    </br>
+    <div id="temperature">
+        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-thermometer-sun"
+            viewBox="0 0 16 16">
+            <path d="M5 12.5a1.5 1.5 0 1 1-2-1.415V2.5a.5.5 0 0 1 1 0v8.585A1.5 1.5 0 0 1 5 12.5z" />
+            <path
+                d="M1 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM3.5 1A1.5 1.5 0 0 0 2 2.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0L5 10.486V2.5A1.5 1.5 0 0 0 3.5 1zm5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1a.5.5 0 0 1 .5-.5zm4.243 1.757a.5.5 0 0 1 0 .707l-.707.708a.5.5 0 1 1-.708-.708l.708-.707a.5.5 0 0 1 .707 0zM8 5.5a.5.5 0 0 1 .5-.5 3 3 0 1 1 0 6 .5.5 0 0 1 0-1 2 2 0 0 0 0-4 .5.5 0 0 1-.5-.5zM12.5 8a.5.5 0 0 1 .5-.5h1a.5.5 0 1 1 0 1h-1a.5.5 0 0 1-.5-.5zm-1.172 2.828a.5.5 0 0 1 .708 0l.707.708a.5.5 0 0 1-.707.707l-.708-.707a.5.5 0 0 1 0-.708zM8.5 12a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1a.5.5 0 0 1 .5-.5z" />
+        </svg>
+        <span id=temp Style="font-size:x-large;"></span>
+        <div id="temp_caution"></div>
+    </div>
+    <div id="humid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-moisture"
+            viewBox="0 0 16 16">
+            <path
+                d="M13.5 0a.5.5 0 0 0 0 1H15v2.75h-.5a.5.5 0 0 0 0 1h.5V7.5h-1.5a.5.5 0 0 0 0 1H15v2.75h-.5a.5.5 0 0 0 0 1h.5V15h-1.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 .5-.5V.5a.5.5 0 0 0-.5-.5h-2zM7 1.5l.364-.343a.5.5 0 0 0-.728 0l-.002.002-.006.007-.022.023-.08.088a28.458 28.458 0 0 0-1.274 1.517c-.769.983-1.714 2.325-2.385 3.727C2.368 7.564 2 8.682 2 9.733 2 12.614 4.212 15 7 15s5-2.386 5-5.267c0-1.05-.368-2.169-.867-3.212-.671-1.402-1.616-2.744-2.385-3.727a28.458 28.458 0 0 0-1.354-1.605l-.022-.023-.006-.007-.002-.001L7 1.5zm0 0-.364-.343L7 1.5zm-.016.766L7 2.247l.016.019c.24.274.572.667.944 1.144.611.781 1.32 1.776 1.901 2.827H4.14c.58-1.051 1.29-2.046 1.9-2.827.373-.477.706-.87.945-1.144zM3 9.733c0-.755.244-1.612.638-2.496h6.724c.395.884.638 1.741.638 2.496C11 12.117 9.182 14 7 14s-4-1.883-4-4.267z" />
+        </svg>
+        <span id=hum Style="font-size:x-large;"></span>
+        <div id="humid_caution"></div>
+    </div>
+    <br></br>
+    <button id="onoff">
+        <i class="fa-solid fa-power-off"></i>
+    </button>
+
+    <button id="UP">
+        <i class="fa-solid fa-sort-up"></i>
+    </button>
+    <br></br>
+    <button id="DOWN">
+        <i class="fa-solid fa-sort-down"></i>
+    </button>
+
+    <script>
+        var i = 0;
+        $("#onoff").click(function () {
+            if (i == 0) {
+                var postdata = {
+                    'on/off': 1, 'up/down': 'none'
+                }
+                i++;
+            }
+            else if (i == 1) {
+                var postdata = {
+                    'on/off': 2, 'up/down': 'none'
+                }
+                i = 0;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/control',
+                data: JSON.stringify(postdata),
+                dataType: 'JSON',
+                contentType: "application/json",
+                success: function (data) {
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            })
+        })
+        $("#UP").click(function () {
+            var postdataup = {
+                'on/off': 'none', 'up/down': 'up'
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/control',
+                data: JSON.stringify(postdataup),
+                dataType: 'JSON',
+                contentType: "application/json",
+                success: function (data) {
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            })
+        })
+        $("#DOWN").click(function () {
+            var postdatadown = {
+                'on/off': 'none', 'up/down': 'down'
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/control',
+                data: JSON.stringify(postdatadown),
+                dataType: 'JSON',
+                contentType: "application/json",
+                success: function (data) {
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            })
+        })
+    </script>
+</body>
+</html>
